@@ -51,6 +51,7 @@ $PAGE->requires->css(new moodle_url('/local/up1offlinequiz2apogee/css/up1offline
 	echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 	///// TEST
 	$form = <<< EOF
+	<h3>Ajouter le fichier TXT provenant d'Apogee</h3>
 	<form method="POST" action="upload_form.php" enctype="multipart/form-data">
 	<input type="hidden" name="annee" value ="$annee">
 	<input type="hidden" name="courseid" value ="$courseid">
