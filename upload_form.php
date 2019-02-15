@@ -17,7 +17,6 @@ $PAGE->requires->css(new moodle_url('/local/up1offlinequiz2apogee/css/up1offline
 /**
  * vérification que l'utilisateur est un administrateur
  */
-if (is_userauthorized($USER->id) || is_siteadmin()) {
 	$annee = 0;
 	$courseid=0;
 	$offlinequizid=0;
@@ -25,6 +24,15 @@ if (is_userauthorized($USER->id) || is_siteadmin()) {
 	if (isset($_REQUEST['annee'])) $annee = $_REQUEST['annee'];
 	if (isset($_REQUEST['courseid'])) $courseid = $_REQUEST['courseid'];
 	if (isset($_REQUEST['offlinequizid'])) $offlinequizid = $_REQUEST['offlinequizid'];
+	if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequizid, $courseid)) {
+            print_error('invalidcoursemodule');
+    	}
+    	if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+            print_error('invalidcourseid');
+    	}
+	require_login($course, false, $cm);
+	$context = context_module::instance($cm->id);
+	require_capability('mod/offlinequiz:viewreports', $context);
 	
 	$PAGE->set_pagelayout('report');
 	if (is_siteadmin()) admin_externalpage_setup('local_up1offlinequiz2apogee', '', null, '', array('pagelayout'=>'report'));
@@ -43,7 +51,6 @@ if (is_userauthorized($USER->id) || is_siteadmin()) {
 	echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 	///// TEST
 	$form = <<< EOF
-	<h3>Ajouter le fichier TXT provenant d'Apogee</h3>
 	<form method="POST" action="upload_form.php" enctype="multipart/form-data">
 	<input type="hidden" name="annee" value ="$annee">
 	<input type="hidden" name="courseid" value ="$courseid">
@@ -82,6 +89,5 @@ EOF;
 	}
 
 
-}
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer(); 
